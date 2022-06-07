@@ -1,2 +1,2 @@
 # Rainbow
-Projekt Aplikacje Internetowe SGGW 2022
+Projekt na zajęcia Aplikacje Internetowe SGGW 2022
