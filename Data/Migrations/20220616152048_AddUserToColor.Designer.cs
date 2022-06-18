@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Rainbow.Data;
 
@@ -10,9 +11,10 @@ using Rainbow.Data;
 namespace Rainbow.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220616152048_AddUserToColor")]
+    partial class AddUserToColor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.5");
@@ -226,14 +228,12 @@ namespace Rainbow.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Hex")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<float>("Hue")
                         .HasColumnType("REAL");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Red")
@@ -242,13 +242,15 @@ namespace Rainbow.Data.Migrations
                     b.Property<float>("Saturation")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("Username")
+                    b.Property<string>("UserId")
                         .HasColumnType("TEXT");
 
                     b.Property<float>("Value")
                         .HasColumnType("REAL");
 
                     b.HasKey("ColorId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Colors");
                 });
@@ -302,6 +304,15 @@ namespace Rainbow.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Rainbow.Color", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,34 +1,37 @@
-﻿@page "/"
+@page "/mycolors"
+@using Rainbow
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
 @inject EditColorState EditColorState
 
-<PageTitle>Rainbow</PageTitle>
+<PageTitle>MyColors</PageTitle>
 
-<h1>Welcome to Rainbow app!</h1>
-
-<AuthorizeView>
-    <Authorized>
-        <p>Manage your colors in <b>My Colors</b> tab.</p>
-    </Authorized>
-    <NotAuthorized>
-        <p>Log in to create and manage your own custom colors.</p>
-    </NotAuthorized>
-</AuthorizeView>
+<h1>My Colors</h1>
 
 <hr>
-<div class="color-cards">
-    @if (colors != null)
-    {
-        foreach (var color in colors)
-        {
-            <ColorCard 
-                Color=@color 
-                OnDelete="@(() => DeleteColor(color))"
-                OnEdit="@(() => EditColorState.ShowEditColorDialog(color))" />
-        }
-    }
-</div>
+<AuthorizeView>
+    <Authorized>
+        <div class="color-cards">
+            @if (colors != null && colors.Count != 0)
+            {
+                foreach (var color in colors)
+                {
+                    <ColorCard 
+                        Color=@color 
+                        OnDelete="@(() => DeleteColor(color))" 
+                        OnEdit="@(() => EditColorState.ShowEditColorDialog(color))" />
+                }
+            }
+            else
+            {
+                <h3>You don't have any colors yet!</h3>
+            }
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <h2>Login to view your colors</h2>
+    </NotAuthorized>
+</AuthorizeView>
 
 @if (EditColorState.ShowingConfigureDialog)
 {
@@ -39,11 +42,17 @@
 }
 
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState> _authState { get; set; }
+    private AuthenticationState authState;
     private List<Color>? colors;
 
     protected override async Task OnInitializedAsync()
     {
-        colors = await HttpClient.GetFromJsonAsync<List<Color>>(NavigationManager.BaseUri + "api/colors");
+        authState = await _authState;
+        var username = authState.User.Identity?.Name;
+        if(username is not null)
+            colors = await HttpClient.GetFromJsonAsync<List<Color>>(NavigationManager.BaseUri + $"api/colors/mycolors/?username={username}");
     }
 
     private async Task DeleteColor(Color color)

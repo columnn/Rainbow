@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Rainbow.Data;
 
@@ -10,9 +11,10 @@ using Rainbow.Data;
 namespace Rainbow.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220607184204_Added Colors")]
+    partial class AddedColors
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.5");
@@ -215,7 +217,7 @@ namespace Rainbow.Data.Migrations
 
             modelBuilder.Entity("Rainbow.Color", b =>
                 {
-                    b.Property<int>("ColorId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -226,14 +228,12 @@ namespace Rainbow.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Hex")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<float>("Hue")
                         .HasColumnType("REAL");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Red")
@@ -242,13 +242,10 @@ namespace Rainbow.Data.Migrations
                     b.Property<float>("Saturation")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("Username")
-                        .HasColumnType("TEXT");
-
                     b.Property<float>("Value")
                         .HasColumnType("REAL");
 
-                    b.HasKey("ColorId");
+                    b.HasKey("Id");
 
                     b.ToTable("Colors");
                 });

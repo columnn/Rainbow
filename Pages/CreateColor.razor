@@ -1,0 +1,59 @@
+﻿@page "/createcolor"
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+<h3>Create Color</h3>
+
+<EditForm Model=color OnValidSubmit=AddColor OnInvalidSubmit=ShowError>
+    <div class="form-container">
+        <label>Color preview:</label>
+        <div class="color-preview" style="background-color: @color.Hex;"></div>
+        @if (isError)
+        {
+            <div class="alert alert-danger">Please Enter a name and pick a color.</div>
+        }
+        <div class="form-field">
+            <label>Name: </label>
+            <InputText @bind-Value="color.Name" />
+            <ValidationMessage For="@(() => color.Name)" />
+        </div>
+        <div class="form-field">
+            <label>Color:</label>
+            <InputText @bind-Value="color.Hex"/>
+            <ValidationMessage For="@(() => color.Hex)" />
+            <input type="color" @bind="color.Hex" @bind:event="oninput"/>
+        </div>
+        <div class="form-buttons">
+            <button class="button-confirm">Create</button>
+        </div>
+    </div>
+    <DataAnnotationsValidator />
+</EditForm>
+
+@code {
+    Color color { get; set; } = new Color();
+    [CascadingParameter]
+    private Task<AuthenticationState> _authState { get; set; }
+    private AuthenticationState authState;
+
+    bool isError = false;
+    protected override async Task OnInitializedAsync()
+    {
+        authState = await _authState;
+        color.Username = authState.User.Identity?.Name;
+    }
+
+    protected void ShowError()
+    {
+        isError = true;
+    }
+
+    private async Task AddColor()
+    {
+        isError = false;
+        await HttpClient.PostAsJsonAsync(NavigationManager.BaseUri + "api/colors", color);
+        NavigationManager.NavigateTo("mycolors");
+    }
+}
+
+

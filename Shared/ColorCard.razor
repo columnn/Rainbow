@@ -1,0 +1,34 @@
+﻿@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+<div class="color-card">
+    <div class="color-canvas" style="background-color: @Color.Hex;"></div>
+    <div class="color-info">
+        <p class="color-name">@Color.Name</p>
+        <AuthorizeView>
+            @if (@context.User.Identity?.Name == Color.Username)
+            {
+                <button @onclick="OnEdit"><i class="fa-solid fa-pen"></i></button>
+                <button @onclick="OnDelete"><i class="fa-solid fa-trash" style="color: #ab3030;"></i></button>
+            }
+        </AuthorizeView>
+        <p class="color-secondary">@Color.Hex</p>
+        @if (Color.Username is not null)
+        {
+            <p class="username">@Color.Username</p>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Color Color { get; set; } = new Color();
+
+    [Parameter] public EventCallback OnDelete { get; set; }
+    [Parameter] public EventCallback OnEdit { get; set; }
+
+    //async Task DeleteColor()
+    //{
+    //    await HttpClient.DeleteAsync(NavigationManager.BaseUri + $"api/colors/{Color.ColorId}");
+    //}
+}

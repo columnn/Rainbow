@@ -1,0 +1,50 @@
+@inject HttpClient HttpClient
+
+<div class="dialog-container">
+    <div class="dialog">
+        <div class="dialog-title">
+            <h2>Edit Color</h2>
+            @Color.Name: @Color.Hex
+        </div>
+        <EditForm class="dialog-body" Model=Color OnValidSubmit=OnConfirm OnInvalidSubmit=ShowError >
+            <div class="form-container">
+                <label>Color preview:</label>
+                <div class="color-preview" style="background-color: @Color.Hex;"></div>
+                @if (isError)
+                {
+                    <div class="alert alert-danger">Please Enter a name and pick a color.</div>
+                }
+                <div class="form-field">
+                    <label>Name: </label>
+                    <InputText @bind-Value="Color.Name" />
+                    <ValidationMessage For="@(() => Color.Name)" />
+                </div>
+                <div class="form-field">
+                    <label>Color:</label>
+                    <InputText @bind-Value="Color.Hex"/>
+                    <ValidationMessage For="@(() => Color.Hex)" />
+                    <input type="color" @bind="Color.Hex" @bind:event="oninput"/>
+                </div>
+                <div class="form-buttons">
+                    <button class="button-cancel" @onclick="OnCancel">Cancel</button>
+                    <button class="button-confirm">Edit</button>
+                </div>
+            </div>
+            <DataAnnotationsValidator />
+        </EditForm>
+    </div>
+</div>
+
+@code {
+
+    [Parameter] public Color Color { get; set; } = new Color();
+    [Parameter] public EventCallback OnCancel { get; set; }
+    [Parameter] public EventCallback OnConfirm { get; set; }
+    bool isError = false;
+
+    protected void ShowError()
+    {
+        isError = true;
+    }
+
+}
